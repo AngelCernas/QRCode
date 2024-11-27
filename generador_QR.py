@@ -1,10 +1,6 @@
 import qrcode
 
-#"601036,1,TIMI,08B"
-
-def generador_qr (texto):
-    qr = qrcode.make(texto)
-    qr.save("QR.png")
-
-texto = "601036,1,TIMI,08B"
-generador_qr(texto)
+img = qrcode.make("601036,1,TIMI,08B")
+f = open("output.png", "wb")
+img.save(f)
+f.close()
