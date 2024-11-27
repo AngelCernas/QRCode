@@ -2,8 +2,12 @@ import cv2
 import numpy as np
 import time
 import pandas as pd
+from datetime import datetime
+from openpyxl import load_workbook
+
 
 capture = cv2.VideoCapture(0)
+fecha_hora = datetime.now().strftime("%Y-%m-%d")
 
 while(capture.isOpened()):
     ret, frame = capture.read()
@@ -17,6 +21,7 @@ while(capture.isOpened()):
 
     if len(data) > 0:
        # print(f'Dato{data}')
+        fila_insert = 2
         cv2.imshow('WebCam',rectifiedImage)
 
         fraccionada = data.split(',')
@@ -46,26 +51,30 @@ while(capture.isOpened()):
         print(marca)
         print(embalaje)
 
+        #Formato del archivo
+        df_existente = pd.read_excel('formato.xlsx')
 
         time.sleep(3)
-
         parametros = {
-            'Consecutivo': [f'{consecutivo}'],
-            'Tarima': [f'{tarima}'],
-            'Area': [f'{area}'],
-            'Bloque': [f'{bloque}'],
-            'Posicion X': [f'{Px}'],
-            'Posicion y': [f'{Py}'],
-            'Posicion Z': [f'{Pz}'],
-            'Bultos': [f'{bultos}'],
-            'Peso': [f'{peso}'],
-            'Cubicaje': [f'{cubicaje}'],
-            'Marca': [f'{marca}'],
-            'Embalaje': [f'{embalaje}']
+            consecutivo,
+            tarima,
+            area,
+            bloque,
+            Px,
+            Py,
+            Pz,
+            bultos,
+            peso,
+            cubicaje,
+            marca,
+            embalaje
 
         }
         df = pd.DataFrame(parametros)
-        df.to_excel('inventario.xlsx', index=False)  # index=False para no incluir los índices en el archivo
+
+        df_concatenador =  pd.concat([df_existente, df], ignore_index=True)
+        #df_concatenador.to_excel(f'{fecha_hora}.xlsx', index=False)
+        df.to_excel(f'{fecha_hora}.xlsx', index=False)  # index=False para no incluir los índices en el archivo
 
     else:
         cv2.imshow('WebCam', frame)
